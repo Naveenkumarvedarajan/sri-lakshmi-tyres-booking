@@ -1,0 +1,80 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#061b3a"><title>Staff Booking Panel | Sri Lakshmi Tyres</title>
+<style>
+:root{--navy:#061b3a;--gold:#f6b51b;--ink:#142033;--muted:#64748b;--line:#dbe3ee;--bg:#f4f7fb}*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.5 system-ui,sans-serif}header{background:var(--navy);color:white;padding:20px}main{max-width:1200px;margin:22px auto;padding:0 14px}.top{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap}h1{margin:0;font-size:26px}h2{font-size:20px;margin:0 0 12px}.card{background:white;border:1px solid var(--line);border-radius:15px;padding:18px;margin-bottom:16px;box-shadow:0 5px 20px #0f172a0a}.row{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}.field{margin-bottom:10px}label{display:block;font-weight:700;font-size:13px;margin-bottom:5px}input,select,textarea{width:100%;padding:10px;border:1px solid #cbd5e1;border-radius:9px;font:inherit}button,.btn{border:0;border-radius:9px;padding:10px 13px;background:var(--gold);font-weight:750;cursor:pointer;text-decoration:none;color:#111827;display:inline-flex;justify-content:center;align-items:center}button:disabled{opacity:.5}.secondary{background:#e2e8f0}.green{background:#dcfce7;color:#166534}.red{background:#fee2e2;color:#991b1b}.blue{background:#dbeafe;color:#1d4ed8}.toolbar{display:flex;gap:8px;flex-wrap:wrap;margin:12px 0}.message{padding:10px;border-radius:9px;margin:10px 0;display:none;white-space:pre-wrap}.ok{display:block;background:#dcfce7;color:#166534}.err{display:block;background:#fee2e2;color:#991b1b}.booking{border:1px solid var(--line);border-radius:12px;padding:14px;margin:12px 0}.bookinghead{display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap}.pill{display:inline-block;background:#e2e8f0;border-radius:30px;padding:3px 9px;font-size:12px;font-weight:800}.pending{background:#fef3c7}.confirmed{background:#dcfce7}.rejected,.cancelled{background:#fee2e2}.details{display:grid;grid-template-columns:1fr 1fr;gap:6px 18px;margin:10px 0}.details div{overflow-wrap:anywhere}.actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}.actions button,.actions a{width:auto}.small{font-size:13px;color:var(--muted)}@media(max-width:700px){.row,.details{grid-template-columns:1fr}.card{padding:14px}}
+</style></head><body>
+<header><div class="top"><div><h1>Sri Lakshmi Tyres</h1><div>Staff booking approval panel</div></div><a class="btn secondary" href="index.html">Customer booking page</a></div></header>
+<main>
+<section class="card" id="loginCard"><h2>Staff sign in</h2><p class="small">Enter the staff PIN configured in Code.gs. Keep this panel URL for staff only.</p><div class="row"><div class="field"><label for="pin">Staff PIN</label><input id="pin" type="password" autocomplete="current-password" placeholder="Enter staff PIN"></div><div style="align-self:end"><button id="loginBtn">Open bookings</button></div></div><div id="loginMessage" class="message"></div></section>
+<section id="dashboard" style="display:none"><section class="card"><div class="top"><h2>Booking requests</h2><button class="secondary" id="refreshBtn">Refresh list</button></div><div class="row"><div class="field"><label for="filterStatus">Filter by status</label><select id="filterStatus"><option value="ALL">All statuses</option><option>PENDING</option><option>CONFIRMED</option><option>RESCHEDULED</option><option>REJECTED</option><option>COMPLETED</option><option>CANCELLED</option></select></div><div class="field"><label for="search">Search customer / booking ID</label><input id="search" placeholder="Name, phone or ID"></div><div class="field"><label for="sortInfo">Workflow</label><input id="sortInfo" value="Newest bookings first" readonly></div></div><div id="listMessage" class="message"></div><div id="bookings"></div></section></section>
+</main>
+<script>
+const GOOGLE_SCRIPT_URL="https://script.google.com/macros/s/AKfycbx-k8G-XyUBD-K3VrfCbzzy9GicdbsMev3SNIVwlionzsCL48lsVOmj7FHnSaQQlPCEQg/exec";
+const SHOP_WHATSAPP_NUMBER="918668199063";
+let staffPin="",allBookings=[];
+const $=id=>document.getElementById(id);
+$("loginBtn").addEventListener("click",login);$("refreshBtn").addEventListener("click",loadBookings);
+$("filterStatus").addEventListener("change",renderBookings);$("search").addEventListener("input",renderBookings);
+async function api(payload){
+ if(!GOOGLE_SCRIPT_URL.startsWith("https://script.google.com/macros/s/")||!GOOGLE_SCRIPT_URL.endsWith("/exec"))throw new Error("Set the deployed Apps Script /exec URL in staff.html first.");
+ const r=await fetch(GOOGLE_SCRIPT_URL,{method:"POST",headers:{"Content-Type":"text/plain;charset=UTF-8"},body:JSON.stringify(payload)});
+ const data=await r.json();if(!data.success)throw new Error(data.message||"Request failed.");return data;
+}
+async function login(){
+ staffPin=$("pin").value.trim();if(!staffPin){show("loginMessage","Enter your staff PIN.",false);return;}
+ $("loginBtn").disabled=true;
+ try{await api({action:"staffList",pin:staffPin});$("loginCard").style.display="none";$("dashboard").style.display="block";await loadBookings();}
+ catch(e){show("loginMessage",e.message,false);staffPin="";}
+ finally{$("loginBtn").disabled=false;}
+}
+async function loadBookings(){
+ $("refreshBtn").disabled=true;
+ try{const r=await api({action:"staffList",pin:staffPin});allBookings=r.bookings||[];renderBookings();show("listMessage","Bookings refreshed.",true);}
+ catch(e){show("listMessage",e.message,false);}
+ finally{$("refreshBtn").disabled=false;}
+}
+function renderBookings(){
+ const status=$("filterStatus").value,q=$("search").value.toLowerCase().trim();
+ const list=allBookings.filter(b=>(status==="ALL"||b.Status===status)&&(!q||[b["Booking ID"],b["Customer Name"],b["Customer Phone"],b["Vehicle Model"]].join(" ").toLowerCase().includes(q)));
+ $("bookings").innerHTML="";
+ if(!list.length){$("bookings").textContent="No bookings match this filter.";return;}
+ list.forEach(b=>{
+  const el=document.createElement("article");el.className="booking";
+  const head=document.createElement("div");head.className="bookinghead";
+  const title=document.createElement("strong");title.textContent=(b["Booking ID"]||"Booking")+" · "+(b["Customer Name"]||"");
+  const pill=document.createElement("span");pill.className="pill "+String(b.Status||"").toLowerCase();pill.textContent=b.Status||"UNKNOWN";head.append(title,pill);el.append(head);
+  const details=document.createElement("div");details.className="details";
+  [["Phone",b["Customer Phone"]],["Vehicle",`${b["Vehicle Type"]||""} — ${b["Vehicle Model"]||""}`],["Registration",b.Registration],["Tyre size",b["Tyre Size"]],["Requested date",b["Preferred Date"]],["Requested time",b["Preferred Time"]],["Services",b.Services],["Notes",b.Notes],["Created",b["Created At"]],["Staff note",b["Staff Note"]]].forEach(([k,v])=>{const d=document.createElement("div");const strong=document.createElement("strong");strong.textContent=k+": ";d.append(strong,document.createTextNode(v||"—"));details.append(d);});
+  el.append(details);
+  const controls=document.createElement("div");controls.className="row";
+  const dateWrap=document.createElement("div");dateWrap.className="field";const dateLabel=document.createElement("label");dateLabel.textContent="Confirmed / alternate date";const date=document.createElement("input");date.type="date";date.value=String(b["Preferred Date"]||"").slice(0,10);dateWrap.append(dateLabel,date);
+  const timeWrap=document.createElement("div");timeWrap.className="field";const timeLabel=document.createElement("label");timeLabel.textContent="Confirmed / alternate slot";const time=document.createElement("input");time.value=b["Preferred Time"]||"";time.placeholder="e.g. 10:00 AM – 11:00 AM";timeWrap.append(timeLabel,time);
+  const noteWrap=document.createElement("div");noteWrap.className="field";const noteLabel=document.createElement("label");noteLabel.textContent="Staff note / reason";const note=document.createElement("input");note.value=b["Staff Note"]||"";note.placeholder="Optional note to customer";noteWrap.append(noteLabel,note);
+  controls.append(dateWrap,timeWrap,noteWrap);el.append(controls);
+  const actions=document.createElement("div");actions.className="actions";
+  addAction(actions,"Accept & prepare WhatsApp","green",()=>updateBooking(b,"CONFIRMED",date.value,time.value,note.value,true));
+  addAction(actions,"Suggest new slot","blue",()=>updateBooking(b,"RESCHEDULED",date.value,time.value,note.value,true));
+  addAction(actions,"Reject","red",()=>updateBooking(b,"REJECTED",date.value,time.value,note.value,true));
+  if(b.Status==="CONFIRMED"||b.Status==="RESCHEDULED")addAction(actions,"Mark completed","secondary",()=>updateBooking(b,"COMPLETED",date.value,time.value,note.value,false));
+  const wa=document.createElement("a");wa.className="btn";wa.target="_blank";wa.rel="noopener";wa.textContent="Open customer WhatsApp";wa.href=whatsAppLink(b,date.value,time.value,note.value);actions.append(wa);
+  el.append(actions);$("bookings").append(el);
+ });
+}
+function addAction(parent,label,cls,fn){const btn=document.createElement("button");btn.className=cls;btn.textContent=label;btn.addEventListener("click",fn);parent.append(btn);}
+async function updateBooking(b,status,date,time,note,confirmation){
+ if(!confirm("Update "+b["Booking ID"]+" to "+status+"?"))return;
+ try{
+  await api({action:"staffUpdate",pin:staffPin,bookingId:b["Booking ID"],status,date,time,staffNote:note,confirmationSent:false});
+  await loadBookings();
+  if(confirmation){const url=whatsAppLink({...b,Status:status},date,time,note);window.open(url,"_blank","noopener");}
+  show("listMessage","Booking "+b["Booking ID"]+" updated to "+status+". "+(confirmation?"Review the WhatsApp message and tap Send.":""),true);
+ }catch(e){show("listMessage",e.message,false);}
+}
+function whatsAppLink(b,date,time,note){
+ const status=b.Status||"PENDING",phone=String(b["Customer Phone"]||"").replace(/\D/g,"");
+ const statusText=status==="CONFIRMED"?"CONFIRMED":status==="RESCHEDULED"?"RESCHEDULED — please note the suggested slot":status==="REJECTED"?"UNABLE TO ACCEPT":status;
+ const lines=["Hello "+(b["Customer Name"]||"")+", this is Sri Lakshmi Tyres, Kaveripakkam.","","Booking ID: "+(b["Booking ID"]||""),"Status: "+statusText,"Vehicle: "+(b["Vehicle Type"]||"")+" "+(b["Vehicle Model"]||""),"Service: "+(b.Services||""),"Appointment date: "+(date||b["Preferred Date"]||""),"Appointment time: "+(time||b["Preferred Time"]||""),note?"Shop note: "+note:"","Please reply to this message if you have any questions.","Sri Lakshmi Tyres · 8668199063"].filter(Boolean);
+ return "https://wa.me/"+phone+"?text="+encodeURIComponent(lines.join("\n"));
+}
+function show(id,msg,ok){const e=$(id);e.className="message "+(ok?"ok":"err");e.textContent=msg;}
+</script></body></html>

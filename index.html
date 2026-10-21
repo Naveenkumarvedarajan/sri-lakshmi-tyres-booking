@@ -1,0 +1,79 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#061b3a">
+<title>Sri Lakshmi Tyres | Book a Service</title>
+<style>
+:root{--navy:#061b3a;--navy2:#0b2a50;--gold:#f6b51b;--ink:#142033;--muted:#64748b;--line:#dbe3ee;--bg:#f4f7fb;--green:#087443}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.5 system-ui,-apple-system,Segoe UI,Roboto,sans-serif}
+header{background:linear-gradient(130deg,var(--navy),var(--navy2));color:white;padding:22px 18px}.wrap{max-width:1120px;margin:auto}.brand{display:flex;align-items:center;gap:18px}.brand-logo{width:min(190px,36vw);max-height:100px;object-fit:contain;background:white;border-radius:12px;padding:5px}.brand-copy h1{font-size:clamp(24px,4vw,36px);margin:0}.slogan{margin:0;color:var(--gold);font-weight:800;font-size:clamp(15px,2.3vw,22px)}.sub,.location{margin:3px 0;color:#dbeafe;font-size:14px}
+.hero{max-width:1200px;margin:18px auto 0;padding:0 16px}.hero img{display:block;width:100%;height:auto;max-height:360px;object-fit:cover;object-position:center;border-radius:16px}
+main{padding:22px 16px 44px}.layout{display:grid;grid-template-columns:minmax(0,1.2fr) minmax(270px,.8fr);gap:20px;align-items:start}.card{background:white;border:1px solid var(--line);border-radius:18px;padding:22px;box-shadow:0 8px 24px #0f172a0a}h2{font-size:21px;margin:0 0 16px}.grid{display:grid;grid-template-columns:1fr 1fr;gap:13px}.field{margin-bottom:13px}label{display:block;font-weight:650;font-size:14px;margin-bottom:6px}input,select,textarea{width:100%;border:1px solid #cbd5e1;border-radius:10px;padding:12px;font:inherit;background:#fff;color:var(--ink)}input:focus,select:focus,textarea:focus{outline:3px solid #f6b51b45;border-color:var(--gold)}
+.services{display:grid;grid-template-columns:1fr 1fr;gap:9px}.service{display:flex;gap:9px;align-items:flex-start;padding:11px;border:1px solid var(--line);border-radius:11px;font-size:14px;font-weight:500}.service input{width:auto;margin-top:4px;accent-color:#d97706}
+button,.button{display:inline-flex;justify-content:center;align-items:center;text-decoration:none;border:0;border-radius:11px;background:var(--gold);color:#111827;padding:13px 18px;font:750 15px system-ui;cursor:pointer;width:100%}button:hover,.button:hover{filter:brightness(.97)}button:disabled{opacity:.6;cursor:wait}.hint{color:var(--muted);font-size:13px;margin:8px 0 0}.summary{background:#fffbeb;border:1px solid #fde68a;border-radius:14px;padding:16px}.summary p{margin:5px 0}.notice{margin-top:14px;border-radius:12px;padding:12px 14px;display:none;white-space:pre-wrap}.notice.ok{display:block;background:#ecfdf5;color:#065f46;border:1px solid #a7f3d0}.notice.err{display:block;background:#fef2f2;color:#991b1b;border:1px solid #fecaca}.status{display:inline-block;padding:4px 9px;border-radius:999px;background:#e2e8f0;font-size:12px;font-weight:700}footer{text-align:center;padding:18px;color:var(--muted);font-size:13px}
+@media(max-width:760px){.brand{align-items:flex-start;gap:12px}.brand-logo{width:112px;max-height:78px}.layout,.grid,.services{grid-template-columns:1fr}.card{padding:18px}.hero{margin-top:12px}}
+</style>
+</head>
+<body>
+<header><div class="wrap brand"><img class="brand-logo" src="sri-lakshmi-tyres-logo.png" alt="Sri Lakshmi Tyres logo"><div class="brand-copy"><h1>Sri Lakshmi Tyres</h1><p class="slogan">Feel the Road Like Never Before</p><p class="sub">Tyre sales • Wheel alignment • Wheel balancing • Tyre care</p><p class="location">Kaveripakkam, Ranipet District, Tamil Nadu</p></div></div></header>
+<section class="hero"><img src="sri-lakshmi-tyres-poster.png" alt="Sri Lakshmi Tyres services"></section>
+<main class="wrap"><div class="layout">
+<section class="card"><h2>Request a booking</h2>
+<form id="bookingForm">
+<div class="grid">
+<div class="field"><label for="name">Customer name *</label><input id="name" name="name" autocomplete="name" required maxlength="100" placeholder="Your full name"></div>
+<div class="field"><label for="phone">Mobile number *</label><input id="phone" name="phone" type="tel" inputmode="tel" autocomplete="tel" required pattern="[0-9+ ()-]{8,20}" maxlength="20" placeholder="10-digit mobile number"></div>
+<div class="field"><label for="vehicle">Vehicle type *</label><select id="vehicle" name="vehicle" required><option value="">Select vehicle</option><option>Bike / Scooter</option><option>Car</option><option>SUV</option><option>Van / Commercial vehicle</option></select></div>
+<div class="field"><label for="model">Vehicle make / model *</label><input id="model" name="model" required maxlength="100" placeholder="e.g., Toyota Innova"></div>
+<div class="field"><label for="reg">Vehicle registration (optional)</label><input id="reg" name="registration" maxlength="20" placeholder="e.g., TN 00 AB 1234"></div>
+<div class="field"><label for="tyresize">Tyre size (optional)</label><input id="tyresize" name="tyreSize" maxlength="30" placeholder="e.g., 205/65 R16"></div>
+<div class="field"><label for="date">Preferred date *</label><input id="date" name="date" type="date" required></div>
+<div class="field"><label for="time">Preferred appointment slot *</label><select id="time" name="time" required><option value="">Choose a slot</option><option>9:00 AM – 10:00 AM</option><option>10:00 AM – 11:00 AM</option><option>11:00 AM – 12:00 PM</option><option>12:00 PM – 1:00 PM</option><option>2:00 PM – 3:00 PM</option><option>3:00 PM – 4:00 PM</option><option>4:00 PM – 5:00 PM</option><option>5:00 PM – 6:00 PM</option></select></div>
+</div>
+<div class="field"><label>Services required * (select one or more)</label><div class="services">
+<label class="service"><input type="checkbox" name="services" value="Tyre purchase / replacement"> Tyre purchase / replacement</label>
+<label class="service"><input type="checkbox" name="services" value="Wheel alignment"> Wheel alignment</label>
+<label class="service"><input type="checkbox" name="services" value="Wheel balancing"> Wheel balancing</label>
+<label class="service"><input type="checkbox" name="services" value="Nitrogen filling"> Nitrogen filling</label>
+<label class="service"><input type="checkbox" name="services" value="Puncture repair"> Puncture repair</label>
+<label class="service"><input type="checkbox" name="services" value="Tyre rotation"> Tyre rotation</label>
+<label class="service"><input type="checkbox" name="services" value="Tyre inspection / advice"> Tyre inspection / advice</label>
+</div><p class="hint">Your appointment is only confirmed after the shop accepts it.</p></div>
+<div class="field"><label for="notes">Additional notes</label><textarea id="notes" name="notes" rows="3" maxlength="1000" placeholder="Tyre brand preference, quantity, alignment issue, etc."></textarea></div>
+<button id="submitBtn" type="submit">Send booking request</button>
+<p class="hint">Submitting this form sends a request to the shop. Staff will check availability and contact you to confirm.</p>
+<div id="notice" class="notice" role="status" aria-live="polite"></div>
+</form></section>
+<aside class="card"><h2>Booking information</h2><div class="summary"><span class="status">Staff confirmation required</span><p><strong>Shop:</strong> Sri Lakshmi Tyres</p><p><strong>Address:</strong> Kaveripakkam, Ranipet District, Tamil Nadu</p><p><strong>Phone / WhatsApp:</strong> 8668199063</p><p><strong>Services:</strong> Tyre sales, alignment, balancing, nitrogen and tyre care</p></div>
+<h2 style="margin-top:22px">How it works</h2><ol><li>Submit your preferred service and appointment time.</li><li>Staff review the request in the staff panel.</li><li>The shop accepts, rejects, or proposes another slot.</li><li>Staff send you the decision through WhatsApp.</li></ol>
+<p class="hint">Please wait for a message from the shop before visiting.</p></aside>
+</div></main><footer>© <span id="year"></span> Sri Lakshmi Tyres • Online service booking</footer>
+<script>
+/* Replace with your deployed Google Apps Script Web App URL ending in /exec. */
+const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbx-k8G-XyUBD-K3VrfCbzzy9GicdbsMev3SNIVwlionzsCL48lsVOmj7FHnSaQQlPCEQg/exec";
+document.getElementById("year").textContent = new Date().getFullYear();
+const form=document.getElementById("bookingForm"), dateInput=document.getElementById("date"), notice=document.getElementById("notice"), submitBtn=document.getElementById("submitBtn");
+const now=new Date(), localDate=new Date(now.getTime()-now.getTimezoneOffset()*60000).toISOString().slice(0,10);
+dateInput.min=localDate; dateInput.value=localDate;
+form.addEventListener("submit", async event=>{
+ event.preventDefault();
+ const services=[...form.querySelectorAll('input[name="services"]:checked')].map(x=>x.value);
+ if(!services.length){showNotice("Please select at least one service.",false);return;}
+ if(!GOOGLE_SCRIPT_URL.startsWith("https://script.google.com/macros/s/")||!GOOGLE_SCRIPT_URL.endsWith("/exec")){showNotice("Booking is not connected yet. The shop administrator must add the deployed Apps Script URL.",false);return;}
+ const data={action:"createBooking",name:form.name.value.trim(),phone:form.phone.value.trim(),vehicle:form.vehicle.value,model:form.model.value.trim(),registration:form.registration.value.trim(),tyreSize:form.tyreSize.value.trim(),date:form.date.value,time:form.time.value,services:services.join(", "),notes:form.notes.value.trim(),source:"Sri Lakshmi Tyres website"};
+ submitBtn.disabled=true;submitBtn.textContent="Sending request…";
+ try{
+   const response=await fetch(GOOGLE_SCRIPT_URL,{method:"POST",headers:{"Content-Type":"text/plain;charset=UTF-8"},body:JSON.stringify(data)});
+   const result=await response.json();
+   if(!response.ok||!result.success)throw new Error(result.message||"Booking could not be saved.");
+   showNotice("Request received successfully! Your booking ID is "+result.bookingId+". Status: PENDING. The shop will contact you after checking availability.",true);
+   form.reset();dateInput.value=localDate;
+ }catch(err){
+   showNotice("We couldn't verify that the request was saved. Please contact the shop at 8668199063 before submitting again. Details: "+err.message,false);
+ }finally{submitBtn.disabled=false;submitBtn.textContent="Send booking request";}
+});
+function showNotice(message,success){notice.className="notice "+(success?"ok":"err");notice.textContent=message;}
+</script>
+</body></html>
